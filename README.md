@@ -1,6 +1,6 @@
 Temp CPU app
 
-Before run app open terminal and execute command for get <username>
+Before run app open terminal and execute command for get %username%
 
 $ who
 
@@ -10,6 +10,6 @@ $ sudo visudo
 
 Add string 
 
-<username>           ALL=(ALL) NOPASSWD:/usr/bin/powermetrics
+%username%           ALL=(ALL) NOPASSWD:/usr/bin/powermetrics
 
 And save
