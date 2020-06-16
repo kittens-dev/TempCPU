@@ -44,6 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         button.target = self
         button.action = #selector(displayMenu)
+        button.font = NSFont(name: "Helvetica-Bold", size: 11)
         
         var title = ""
         
@@ -67,13 +68,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // let script = "do shell script \"echo 'password'|sudo -S powermetrics -n 1|grep -i \\\"CPU die temperature\\\"| sed 's/^.*: //' \""
         
-        let script = "do shell script \"sudo powermetrics -n 1|grep -i \\\"CPU die temperature\\\"| sed 's/^.*: //' \""
+        let script = "do shell script \"sudo powermetrics --samplers smc -n 1|grep -i \\\"CPU die temperature\\\\|Fan:\\\"| sed 's/^.*: //'\""
 
         var errorInfo: NSDictionary?
 
         if let script = NSAppleScript(source: script),
         let result = script.executeAndReturnError(&errorInfo) as? NSAppleEventDescriptor,
            let text = result.stringValue {
+            print(text)
             return text
         }
         else if let error = errorInfo {
