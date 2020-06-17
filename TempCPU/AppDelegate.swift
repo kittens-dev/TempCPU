@@ -10,8 +10,7 @@ import Cocoa
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     
-    //strong reference to retain the status bar item object
-	var statusItem: NSStatusItem?
+    var statusItem: NSStatusItem?
     
     @IBOutlet weak var appMenu: NSMenu!
     
@@ -32,8 +31,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                        pressure: 0)!
         NSMenu.popUpContextMenu(appMenu, with: event, for: button)
     }
-	
-	func applicationDidFinishLaunching(_ aNotification: Notification) {
+    
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItem = NSStatusBar.system.statusItem(withLength: -1)
         
         guard let button = statusItem?.button else {
@@ -75,11 +74,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // let script = "do shell script \"echo 'password'|sudo -S powermetrics -n 1|grep -i \\\"CPU die temperature\\\"| sed 's/^.*: //' \""
         
         let script = "do shell script \"sudo powermetrics --samplers smc -n 1|grep -i \\\"CPU die temperature\\\\|Fan:\\\"| sed 's/^.*: //'\""
-
+        
         var errorInfo: NSDictionary?
-
+        
         if let script = NSAppleScript(source: script),
-        let result = script.executeAndReturnError(&errorInfo) as? NSAppleEventDescriptor,
+            let result = script.executeAndReturnError(&errorInfo) as? NSAppleEventDescriptor,
             let text = result.stringValue {
             return text
         }
@@ -91,7 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             failure = true
             return "Unexpected error while executing script"
         }
-
+        
     }
     
     func messageBox(title: String, text: String) {
@@ -107,7 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 }
 
 extension DispatchQueue {
-
+    
     static func background(delay: Double = 0.0, background: (()->Void)? = nil, completion: (() -> Void)? = nil) {
         DispatchQueue.global(qos: .background).async {
             background?()
@@ -118,5 +117,5 @@ extension DispatchQueue {
             }
         }
     }
-
+    
 }
