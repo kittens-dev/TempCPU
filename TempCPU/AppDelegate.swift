@@ -95,7 +95,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func messageBox(title: String, text: String) {
-        if title != "Error" {return}
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = text
