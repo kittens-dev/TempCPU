@@ -46,23 +46,29 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         button.action = #selector(displayMenu)
         button.font = NSFont(name: "Helvetica-Bold", size: 11)
         
-        var title = ""
+        var message = ""
+        var failure = false
         
         if #available(OSX 10.12, *) {
             _ = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) {_ in
                 DispatchQueue.background(background: {
-                    title = self.doTask()
+                    message = self.doTask(failure: &failure)
                 }, completion: {
-                    button.title = title
+                    button.title = message
                 })
+                if failure {
+                    self.messageBox(title: "Error", text: message)
+                    exit(0)
+                }
             }
         } else {
-            button.title = "Error. You need OSX >= 10.12"
+            self.messageBox(title: "Error", text: "You need OSX >= 10.12")
+            exit(0)
         }
         
     }
     
-    func doTask() -> String {
+    func doTask(failure: inout Bool) -> String {
         
         //  let script = "do shell script \"sudo powermetrics -n 1|grep -i \\\"CPU die temperature\\\"| sed 's/^.*: //' \" with administrator privileges"
         
@@ -74,20 +80,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         if let script = NSAppleScript(source: script),
         let result = script.executeAndReturnError(&errorInfo) as? NSAppleEventDescriptor,
-           let text = result.stringValue {
-            print(text)
+            let text = result.stringValue {
             return text
         }
         else if let error = errorInfo {
-            print(error)
+            failure = true
+            return error.description
         }
         else {
-            print("Unexpected error while executing script")
+            failure = true
+            return "Unexpected error while executing script"
         }
 
-        return ""
     }
     
+    func messageBox(title: String, text: String) {
+        if title != "Error" {return}
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = text
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: "Cancel")
+        alert.runModal()
+    }
     
 }
 
